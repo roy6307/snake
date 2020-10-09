@@ -1,20 +1,5 @@
-/*
-
---------ÇØ¾ß ÇÒÀÏ--------
-1. »ç°ú ¹ìÀ§Ä¡¿£ ½ºÆù X      V
-2. ÆĞ¹èÁ¶°Ç              
-   ¤¤ ¸ÊÅ»Ãâ or ²¿¶ó¹Ú.      /
-3. ½Â¸®Á¶°Ç                  V
-   ¤¤ ¸Ê ²ËÃ¤¿ò.
-4. ¹İ´ë¹æÇâ ÀÔ·ÂÀº ¹«½Ã      V
-5. ´Ù¸¸µé°í ÀÚ¶ûÇÏ±â(Áß¿ä)
--------------------------
-
-*/
-
 #include <windows.h>
 #include <iostream>
-#include <cmath>
 #include <conio.h>
 #include <random>
 #include <vector>
@@ -26,22 +11,21 @@
 
 using namespace std;
 
-random_device rd; // ·£
-mt19937 gen(rd());// ´ı
-uniform_int_distribution<int> dis(0, 14); //·£´ı
-int toward = RIGHT; // ÃÊ±â ¹æÇâ
-int x = 0, y = 0; // ¸Ó¸® À§Ä¡
-int point = 0; // Á¡¼ö
-RECT rc; // »ç°¢Çü¿ë ÁÂÇ¥
+random_device rd; // ëœ
+mt19937 gen(rd());// ë¤
+uniform_int_distribution<int> dis(0, 14); //ëœë¤
+int toward = RIGHT; // ì´ˆê¸° ë°©í–¥
+int x = 0, y = 0; // ë¨¸ë¦¬ ìœ„ì¹˜
+int point = 0; // ì ìˆ˜
+RECT rc; // ì‚¬ê°í˜•ìš© ì¢Œí‘œ
 HWND myconsole;
 HDC mydc;
 
-bool aps = false; // »ç°ú Á¸Àç ¿©ºÎ
-int z, c; //»ç°ú¿ë ÁÂÇ¥
+bool aps = false; // ì‚¬ê³¼ ì¡´ì¬ ì—¬ë¶€
+int z, c; //ì‚¬ê³¼ìš© ì¢Œí‘œ
 
-vector<int> tx; // ÈçÀû
-vector<int> ty; // ÈçÀû
-
+vector<int> tx; // í”ì 
+vector<int> ty; // í”ì 
 
 void move(int key) {
     tx.insert(tx.begin(), 1, x);
@@ -88,7 +72,7 @@ void spawn_apple() {
 
             z = dis(gen), c = dis(gen);
 
-            if (tx.size() == 0) { // size°¡ 0ÀÏ¶§¸¦ »ı°¢ ¸øÇØ¼­ ¸î½Ã°£À» »ğÁú ÇÑ°Å´Ï
+            if (tx.size() == 0) { // sizeê°€ 0ì¼ë•Œë¥¼ ìƒê° ëª»í•´ì„œ ëª‡ì‹œê°„ì„ ì‚½ì§ˆ í•œê±°ë‹ˆ
                 if (z == 0 && c == 0) {
                     temp = false;
                 } else {
@@ -111,6 +95,7 @@ void spawn_apple() {
                 aps = true;
                 break;
             }
+
         }
     }
 }
@@ -149,12 +134,12 @@ int main()
             move(toward);
         }
 
-        if (x == z && y == c) {  // Á¡¼ö ¿Ã¸®±â
+        if (x == z && y == c) {  // ì ìˆ˜ ì˜¬ë¦¬ê¸°
             point += 1;
             aps = false;
         }
 
-        if (tx.size() >= point) { // Áö¿ì±â
+        if (tx.size() >= point) { // ì§€ìš°ê¸°
             for (int i = 0; i < tx.size() - point; i++) {
                 rc = { tx.back() * 20 + 14, ty.back() * 20 + 14, (tx.back() + 1) * 20 + 10, (ty.back() + 1) * 20 + 10 };
                 FillRect(mydc, &rc, CreateSolidBrush(RGB(12, 12, 12)));
@@ -163,8 +148,13 @@ int main()
             }
         }
 
-        if (x < 0 || x > 14 || y < 0 || y > 14 || point == 224) break; // ÆĞ¹è: ¸ÊÅ»Ãâ
-        if (point == 224) break; // ½Â¸®: ¸Ê ´Ù Ã¤¿ò
+        if (x < 0 || x > 14 || y < 0 || y > 14 || point == 224) return 1; // íŒ¨ë°°: ë§µíƒˆì¶œ
+
+        for (int i = 0; i < tx.size(); i++)
+            if (tx[i] == x && ty[i] == y) return 2; // íŒ¨ë°°: ê¼¬ë¼ë°•
+
+        if (point == 224) return 3; // ìŠ¹ë¦¬: ë§µ ë‹¤ ì±„ì›€
+
         Sleep(120);
     }
 
